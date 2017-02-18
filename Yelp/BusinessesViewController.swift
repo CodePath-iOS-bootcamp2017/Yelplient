@@ -8,17 +8,30 @@
 
 import UIKit
 
-class BusinessesViewController: UIViewController {
+class BusinessesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var businesses: [Business]!
+    
+    @IBOutlet weak var businessTableView: UITableView!
+    var searchBar:UISearchBar!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.businessTableView.delegate = self
+        self.businessTableView.dataSource = self
+        self.businessTableView.rowHeight = UITableViewAutomaticDimension
+        self.businessTableView.estimatedRowHeight = 120
+        
+        self.configureSearchBar()
+        
         Business.searchWithTerm(term: "Thai", completion: { (businesses: [Business]?, error: Error?) -> Void in
             
             self.businesses = businesses
+            
             if let businesses = businesses {
+                self.businessTableView.reloadData()
+                
                 for business in businesses {
                     print(business.name!)
                     print(business.address!)
@@ -44,6 +57,28 @@ class BusinessesViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func configureSearchBar(){
+        self.searchBar = UISearchBar()
+        self.searchBar.sizeToFit()
+        navigationItem.titleView = self.searchBar
+    }
+    
+    //overriding tableview delegate and datasource methods
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if self.businesses != nil  {
+            return self.businesses.count
+        }else{
+            return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BusinessTableViewCell", for: indexPath) as! BusinessTableViewCell
+        
+        cell.business = self.businesses[indexPath.row]
+        return cell
     }
     
     /*
