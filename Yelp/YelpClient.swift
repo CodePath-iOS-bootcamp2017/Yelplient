@@ -1,10 +1,3 @@
-//
-//  YelpClient.swift
-//  Yelp
-//
-//  Created by Timothy Lee on 9/19/14.
-//  Copyright (c) 2014 Timothy Lee. All rights reserved.
-//
 
 import UIKit
 
@@ -70,9 +63,9 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         return self.get("search", parameters: parameters,
                         success: { (operation: AFHTTPRequestOperation, response: Any) -> Void in
                             if let response = response as? [String: Any]{
-                                let dictionaries = response["businesses"] as? [NSDictionary]
-                                if dictionaries != nil {
-                                    completion(Business.businesses(array: dictionaries!), nil)
+                                print(response)
+                                if let dictionaries = response["businesses"] as? [NSDictionary]{
+                                    completion(Business.businesses(array: dictionaries), nil)
                                 }
                             }
                         },
