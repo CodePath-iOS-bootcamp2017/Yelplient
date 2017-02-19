@@ -11,6 +11,7 @@ import UIKit
 class BusinessesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var businesses: [Business]!
+    var searchFilter: SearchFilter = SearchFilter()
     
     @IBOutlet weak var businessTableView: UITableView!
     var searchBar:UISearchBar!
@@ -25,33 +26,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         
         self.configureSearchBar()
         
-        Business.searchWithTerm(term: "Thai", completion: { (businesses: [Business]?, error: Error?) -> Void in
-            
-            self.businesses = businesses
-            
-            if let businesses = businesses {
-                self.businessTableView.reloadData()
-                
-                for business in businesses {
-                    print(business.name!)
-                    print(business.address!)
-                }
-            }
-            
-            }
-        )
-        
-        /* Example of Yelp search with more search options specified
-         Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
-         self.businesses = businesses
-         
-         for business in businesses {
-         print(business.name!)
-         print(business.address!)
-         }
-         }
-         */
-        
+        self.performInitialSearch()
     }
     
     override func didReceiveMemoryWarning() {
@@ -63,6 +38,59 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         self.searchBar = UISearchBar()
         self.searchBar.sizeToFit()
         navigationItem.titleView = self.searchBar
+        self.searchBar.delegate = self
+    }
+    
+    func performInitialSearch(){
+        /*
+         Business.searchWithTerm(term: "Thai", completion: { (businesses: [Business]?, error: Error?) -> Void in
+         
+         self.businesses = businesses
+         
+         if let businesses = businesses {
+         self.businessTableView.reloadData()
+         
+         for business in businesses {
+         print(business.name!)
+         print(business.address!)
+         }
+         }
+         
+         }
+         )
+         
+         //Example of Yelp search with more search options specified
+         Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
+         self.businesses = businesses
+         
+         for business in businesses {
+         print(business.name!)
+         print(business.address!)
+         }
+         }
+         */
+        
+        Business.search { (businesses: [Business]?, error: Error?) in
+            if let businesses = businesses {
+                self.businesses = businesses
+                self.businessTableView.reloadData()
+            }
+        }
+    }
+    
+    func performSearchWithFilter(){
+        if let searchText = self.searchBar.text{
+            self.searchFilter.term = searchText
+        }else{
+            self.searchFilter.term = ""
+        }
+        print((self.searchFilter.term))
+        Business.searchWithTerm(term: (self.searchFilter.term)!, sort: nil, categories: nil, deals: nil) { (businesses: [Business]?, error: Error?) in
+            if let businesses = businesses{
+                self.businesses = businesses
+                self.businessTableView.reloadData()
+            }
+        }
     }
     
     //overriding tableview delegate and datasource methods
@@ -91,4 +119,22 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
      }
      */
     
+}
+
+extension BusinessesViewController: UISearchBarDelegate{
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        self.searchBar.showsCancelButton = true
+        self.performSearchWithFilter()
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        self.searchBar.showsCancelButton = true
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        self.searchBar.showsCancelButton = false
+        self.searchBar.resignFirstResponder()
+        self.searchBar.text = ""
+        self.performInitialSearch()
+    }
 }

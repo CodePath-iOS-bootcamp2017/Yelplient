@@ -11,7 +11,9 @@ let yelpToken = "yD24_n1kPFXQTir3b3mBm7c_IfFNKSFN"
 let yelpTokenSecret = "F8vimX5iCDdbjU9reMykte5YtXY"
 
 enum YelpSortMode: Int {
-    case bestMatched = 0, distance, highestRated
+    case bestMatched = 0
+    case distance = 1
+    case highestRated = 2
 }
 
 class YelpClient: BDBOAuth1RequestOperationManager {
@@ -40,11 +42,17 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         return searchWithTerm(term, sort: nil, categories: nil, deals: nil, completion: completion)
     }
     
-    func searchWithTerm(_ term: String, sort: YelpSortMode?, categories: [String]?, deals: Bool?, completion: @escaping ([Business]?, Error?) -> Void) -> AFHTTPRequestOperation {
+    func searchWithTerm(_ term: String?, sort: YelpSortMode?, categories: [String]?, deals: Bool?, completion: @escaping ([Business]?, Error?) -> Void) -> AFHTTPRequestOperation {
         // For additional parameters, see http://www.yelp.com/developers/documentation/v2/search_api
         
         // Default the location to San Francisco
-        var parameters: [String : AnyObject] = ["term": term as AnyObject, "ll": "37.785771,-122.406165" as AnyObject]
+//        var parameters: [String : AnyObject] = ["term": term as AnyObject, "ll": "37.785771,-122.406165" as AnyObject]
+        
+        var parameters: [String : AnyObject] = ["ll": "37.785771,-122.406165" as AnyObject]
+        
+        if let term = term {
+            parameters["term"] = term as AnyObject?
+        }
         
         if sort != nil {
             parameters["sort"] = sort!.rawValue as AnyObject?
@@ -63,7 +71,7 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         return self.get("search", parameters: parameters,
                         success: { (operation: AFHTTPRequestOperation, response: Any) -> Void in
                             if let response = response as? [String: Any]{
-                                print(response)
+//                                print(response)
                                 if let dictionaries = response["businesses"] as? [NSDictionary]{
                                     completion(Business.businesses(array: dictionaries), nil)
                                 }
