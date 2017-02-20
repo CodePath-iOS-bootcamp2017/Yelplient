@@ -4,6 +4,7 @@
 //
 
 import UIKit
+import SVProgressHUD
 
 class BusinessesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
     
@@ -121,13 +122,14 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func performSearchWithFilter(){
-        
+        SVProgressHUD.show()
         self.evaluateFilterCriteria()
         Business.searchWithFilter(searchString: BusinessesViewController.searchFilter) { (businesses:[Business]?, error: Error?) in
             if let businesses = businesses{
                 self.businesses = businesses
                 self.businessTableView.reloadData()
             }
+            SVProgressHUD.dismiss()
         }
         
     }
