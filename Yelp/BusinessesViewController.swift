@@ -14,6 +14,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     
     var searchBar:UISearchBar!
     var loadingMoreProgressIndicator: InfiniteScrollActivityView?
+    let refreshControl = UIRefreshControl()
     
     var isLoadingMoreData = false
     
@@ -25,6 +26,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         
         self.initializeSearchFilter()
         self.configureSearchBar()
+        self.configureRefreshControl()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -35,6 +37,17 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func configureRefreshControl(){
+        self.refreshControl.addTarget(self, action: #selector(refreshContent(_:)), for: UIControlEvents.valueChanged)
+        self.businessTableView.insertSubview(refreshControl, at: 0)
+    }
+    
+    // called on refresh event
+    func refreshContent(_ refreshControl: UIRefreshControl){
+        self.loadDataFromNetwork()
+        refreshControl.endRefreshing()
     }
     
     func configureTableView(){
