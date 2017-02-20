@@ -4,6 +4,7 @@
 //
 
 import UIKit
+import MapKit
 import SVProgressHUD
 
 class BusinessesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
@@ -12,7 +13,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     static var searchFilter: SearchFilter = SearchFilter()
     
     @IBOutlet weak var businessTableView: UITableView!
-    
+    @IBOutlet weak var mapView: MKMapView!
     var searchBar:UISearchBar!
     var loadingMoreProgressIndicator: InfiniteScrollActivityView?
     let refreshControl = UIRefreshControl()
@@ -23,6 +24,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         super.viewDidLoad()
         
         self.configureTableView()
+        self.congigureMapView()
         self.configureProgressIndicator()
         
         self.initializeSearchFilter()
@@ -56,6 +58,22 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         self.businessTableView.dataSource = self
         self.businessTableView.rowHeight = UITableViewAutomaticDimension
         self.businessTableView.estimatedRowHeight = 120
+        self.businessTableView.isHidden = false
+        self.businessTableView.alpha = 1.0
+    }
+    
+    func congigureMapView(){
+        self.mapView.isHidden = true
+        self.mapView.alpha = 0.0
+        
+        let centerLocation = CLLocation(latitude: 37.7833, longitude: -122.4167)
+        self.goToLocation(location: centerLocation)
+    }
+    
+    func goToLocation(location: CLLocation){
+        let span = MKCoordinateSpanMake(0.1, 0.1)
+        let region = MKCoordinateRegionMake(location.coordinate, span)
+        self.mapView.setRegion(region, animated: false)
     }
     
     func configureProgressIndicator(){
@@ -187,6 +205,32 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
             }
         }
         
+    }
+    
+    @IBAction func onViewChanged(_ sender: Any) {
+        if self.businessTableView.isHidden{
+           self.businessTableView.isHidden = false
+           self.businessTableView.alpha = 1.0
+            self.mapView.isHidden = true
+            self.mapView.alpha = 0
+        }else{
+            self.businessTableView.isHidden = true
+            self.businessTableView.alpha = 0
+            self.mapView.isHidden = false
+            self.mapView.alpha = 1.0
+            self.plotMapAnnotations()
+        }
+    }
+    
+    func plotMapAnnotations(){
+        self.mapView.removeAnnotations(self.mapView.annotations)
+        for business in self.businesses{
+            let businessCoordinate = CLLocationCoordinate2D(latitude: business.latitude!, longitude: business.longitude!)
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = businessCoordinate
+            annotation.title = business.name
+            self.mapView.addAnnotation(annotation)
+        }
     }
     
     /*

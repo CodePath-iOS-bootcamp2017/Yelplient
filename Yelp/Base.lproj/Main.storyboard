@@ -22,15 +22,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="102" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Xrb-Pg-72B">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="CEZ-I3-iTU">
+                                <rect key="frame" x="0.0" y="64" width="414" height="672"/>
+                            </mapView>
+                            <tableView clipsSubviews="YES" alpha="0.0" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="102" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Xrb-Pg-72B">
+                                <rect key="frame" x="0.0" y="64" width="414" height="672"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="BusinessTableViewCell" rowHeight="102" id="sBh-Sr-KtE" customClass="BusinessTableViewCell" customModule="Yelp" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="414" height="102"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sBh-Sr-KtE" id="T2j-HY-Je9">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="101.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="101"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="IhW-1d-9io">
@@ -124,10 +127,14 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="CEZ-I3-iTU" firstAttribute="leading" secondItem="XhR-oz-92f" secondAttribute="leading" id="6Kr-yz-wmr"/>
+                            <constraint firstAttribute="trailing" secondItem="CEZ-I3-iTU" secondAttribute="trailing" id="DIb-5T-5Ng"/>
                             <constraint firstItem="VBY-gq-v8E" firstAttribute="top" secondItem="Xrb-Pg-72B" secondAttribute="bottom" id="S04-7N-tOB"/>
+                            <constraint firstItem="CEZ-I3-iTU" firstAttribute="top" secondItem="hR0-74-jRp" secondAttribute="bottom" id="Tuc-B9-c9R"/>
                             <constraint firstItem="Xrb-Pg-72B" firstAttribute="leading" secondItem="XhR-oz-92f" secondAttribute="leading" id="a9l-X7-75v"/>
                             <constraint firstAttribute="trailing" secondItem="Xrb-Pg-72B" secondAttribute="trailing" id="aaS-xg-TWT"/>
-                            <constraint firstItem="Xrb-Pg-72B" firstAttribute="top" secondItem="XhR-oz-92f" secondAttribute="top" id="n97-U5-imQ"/>
+                            <constraint firstItem="VBY-gq-v8E" firstAttribute="top" secondItem="CEZ-I3-iTU" secondAttribute="bottom" id="pEU-YI-IQq"/>
+                            <constraint firstItem="Xrb-Pg-72B" firstAttribute="top" secondItem="hR0-74-jRp" secondAttribute="bottom" id="uOw-Fr-8p9"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="w3s-2L-tz5">
@@ -136,10 +143,15 @@
                                 <segue destination="hwA-Pb-irJ" kind="show" id="yXa-Q8-aTf"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="map" id="ysL-Wi-t08"/>
+                        <barButtonItem key="rightBarButtonItem" title="map" id="ysL-Wi-t08">
+                            <connections>
+                                <action selector="onViewChanged:" destination="2xI-yr-O5N" id="VHv-PP-SOJ"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="businessTableView" destination="Xrb-Pg-72B" id="x0I-8x-ya5"/>
+                        <outlet property="mapView" destination="CEZ-I3-iTU" id="bPv-m3-iO2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Fgb-4b-F1b" userLabel="First Responder" sceneMemberID="firstResponder"/>

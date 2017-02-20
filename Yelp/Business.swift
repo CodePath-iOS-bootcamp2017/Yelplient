@@ -9,6 +9,8 @@ class Business: NSObject {
     let distance: String?
     let ratingImageURL: URL?
     let reviewCount: NSNumber?
+    var latitude: Double?
+    var longitude: Double?
     
     init(dictionary: NSDictionary) {
         name = dictionary["name"] as? String
@@ -39,6 +41,18 @@ class Business: NSObject {
                     if let firstNeighborhood = neighborhoods[0] as? String{
                         address += firstNeighborhood
                     }
+                }
+            }
+            
+            self.latitude = nil
+            self.longitude = nil
+            if let businessCoordinate = location.value(forKey: "coordinate") as? NSDictionary{
+                if let latitude = businessCoordinate.value(forKey: "latitude") as? Double{
+                    self.latitude = latitude
+                }
+                
+                if let longitude = businessCoordinate.value(forKey: "longitude") as? Double{
+                    self.longitude = longitude
                 }
             }
         }
