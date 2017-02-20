@@ -91,4 +91,8 @@ class Business: NSObject {
     class func search(completion: @escaping ([Business]?, Error?) -> Void) {
         _ = YelpClient.sharedInstance.searchWithTerm(nil, sort: nil, categories: nil, deals: nil, completion: completion)
     }
+    
+    class func searchWithFilter(searchString: SearchFilter, completion: @escaping ([Business]?, Error?) -> Void) -> Void {
+        _ = YelpClient.sharedInstance.searchBusinesses(searchString, completion: completion)
+    }
 }

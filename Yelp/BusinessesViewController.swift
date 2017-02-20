@@ -11,9 +11,10 @@ import UIKit
 class BusinessesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var businesses: [Business]!
-    var searchFilter: SearchFilter = SearchFilter()
+    static var searchFilter: SearchFilter = SearchFilter()
     
     @IBOutlet weak var businessTableView: UITableView!
+    
     var searchBar:UISearchBar!
     
     override func viewDidLoad() {
@@ -24,14 +25,54 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         self.businessTableView.rowHeight = UITableViewAutomaticDimension
         self.businessTableView.estimatedRowHeight = 120
         
+        self.initializeSearchFilter()
         self.configureSearchBar()
-        
         self.performInitialSearch()
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func initializeSearchFilter(){
+        print("initializeSearchFilter")
+        BusinessesViewController.searchFilter.term = nil
+        BusinessesViewController.searchFilter.categories = nil
+        BusinessesViewController.searchFilter.distance = nil
+        BusinessesViewController.searchFilter.deal = nil
+        BusinessesViewController.searchFilter.offset = nil
+        BusinessesViewController.searchFilter.sort = nil
+        
+        BusinessesViewController.searchFilter.generalFeatures.append(Feature(featureName: "Restaurants", featureCode: "restaurants", isFeatureActivated: false))
+        BusinessesViewController.searchFilter.generalFeatures.append(Feature(featureName: "Food", featureCode: "food", isFeatureActivated: false))
+        BusinessesViewController.searchFilter.generalFeatures.append(Feature(featureName: "Nightlife", featureCode: "nightlife", isFeatureActivated: false))
+        BusinessesViewController.searchFilter.generalFeatures.append(Feature(featureName: "Hotels & Travel", featureCode: "hotelstravel", isFeatureActivated: false))
+        BusinessesViewController.searchFilter.generalFeatures.append(Feature(featureName: "Real Estate", featureCode: "realestate", isFeatureActivated: false))
+        BusinessesViewController.searchFilter.generalFeatures.append(Feature(featureName: "Health & Medical", featureCode: "health", isFeatureActivated: false))
+        BusinessesViewController.searchFilter.generalFeatures.append(Feature(featureName: "Beaches", featureCode: "beaches", isFeatureActivated: false))
+        BusinessesViewController.searchFilter.generalFeatures.append(Feature(featureName: "Beauty & Spas", featureCode: "beautysvc", isFeatureActivated: false))
+        BusinessesViewController.searchFilter.generalFeatures.append(Feature(featureName: "Education", featureCode: "education", isFeatureActivated: false))
+        BusinessesViewController.searchFilter.generalFeatures.append(Feature(featureName: "Fashion", featureCode: "fashion", isFeatureActivated: false))
+    }
+    
+    func evaluateFilterCriteria(){
+        BusinessesViewController.searchFilter.term = nil
+        if let searchText = self.searchBar.text{
+            if(!searchText.isEmpty){
+                BusinessesViewController.searchFilter.term = searchText
+            }
+        }
+        
+        BusinessesViewController.searchFilter.categories = []
+        for feature in BusinessesViewController.searchFilter.generalFeatures{
+            if feature.isActivated!{
+                BusinessesViewController.searchFilter.categories?.append(feature.code!)
+            }
+        }
+        if (BusinessesViewController.searchFilter.categories?.isEmpty)!{
+            BusinessesViewController.searchFilter.categories = nil
+        }
     }
     
     func configureSearchBar(){
@@ -79,18 +120,28 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func performSearchWithFilter(){
+        /*
         if let searchText = self.searchBar.text{
-            self.searchFilter.term = searchText
+            BusinessesViewController.searchFilter.term = searchText
         }else{
-            self.searchFilter.term = ""
+            BusinessesViewController.searchFilter.term = ""
         }
-        print((self.searchFilter.term))
-        Business.searchWithTerm(term: (self.searchFilter.term)!, sort: nil, categories: nil, deals: nil) { (businesses: [Business]?, error: Error?) in
+//        print(BusinessesViewController.searchFilter.term)
+        Business.searchWithTerm(term: (BusinessesViewController.searchFilter.term)!, sort: nil, categories: nil, deals: nil) { (businesses: [Business]?, error: Error?) in
             if let businesses = businesses{
                 self.businesses = businesses
                 self.businessTableView.reloadData()
             }
         }
+        */
+        self.evaluateFilterCriteria()
+        Business.searchWithFilter(searchString: BusinessesViewController.searchFilter) { (businesses:[Business]?, error: Error?) in
+            if let businesses = businesses{
+                self.businesses = businesses
+                self.businessTableView.reloadData()
+            }
+        }
+        
     }
     
     //overriding tableview delegate and datasource methods
@@ -107,6 +158,11 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         
         cell.business = self.businesses[indexPath.row]
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.searchBar.resignFirstResponder()
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     /*
