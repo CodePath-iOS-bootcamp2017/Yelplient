@@ -3,8 +3,7 @@
 //  Yelp
 //
 //  Created by Satyam Jaiswal on 2/15/17.
-//  Copyright © 2017 Timothy Lee. All rights reserved.
-//
+
 
 import UIKit
 

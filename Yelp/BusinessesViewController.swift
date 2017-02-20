@@ -2,9 +2,6 @@
 //  BusinessesViewController.swift
 //  Yelp
 //
-//  Created by Timothy Lee on 4/23/15.
-//  Copyright (c) 2015 Timothy Lee. All rights reserved.
-//
 
 import UIKit
 
@@ -16,15 +13,15 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     @IBOutlet weak var businessTableView: UITableView!
     
     var searchBar:UISearchBar!
+    var loadingMoreProgressIndicator: InfiniteScrollActivityView?
+    
     var isLoadingMoreData = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.businessTableView.delegate = self
-        self.businessTableView.dataSource = self
-        self.businessTableView.rowHeight = UITableViewAutomaticDimension
-        self.businessTableView.estimatedRowHeight = 120
+        self.configureTableView()
+        self.configureProgressIndicator()
         
         self.initializeSearchFilter()
         self.configureSearchBar()
@@ -38,6 +35,24 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func configureTableView(){
+        self.businessTableView.delegate = self
+        self.businessTableView.dataSource = self
+        self.businessTableView.rowHeight = UITableViewAutomaticDimension
+        self.businessTableView.estimatedRowHeight = 120
+    }
+    
+    func configureProgressIndicator(){
+        let progressIndicatorFrameTableView = CGRect(x: 0, y: self.businessTableView.contentSize.height, width: self.businessTableView.bounds.width, height: InfiniteScrollActivityView.defaultHeight)
+        self.loadingMoreProgressIndicator = InfiniteScrollActivityView(frame: progressIndicatorFrameTableView)
+        loadingMoreProgressIndicator?.isHidden = true
+        self.businessTableView.addSubview(loadingMoreProgressIndicator!)
+        
+        var insetTableView = self.businessTableView.contentInset
+        insetTableView.bottom += (loadingMoreProgressIndicator?.bounds.height)!
+        self.businessTableView.contentInset = insetTableView
     }
     
     func initializeSearchFilter(){
@@ -105,17 +120,16 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func loadMoreData(){
-        if !isLoadingMoreData{
-            self.isLoadingMoreData = true
-            BusinessesViewController.searchFilter.offset = self.businesses.count
-            self.evaluateFilterCriteria()
-            Business.searchWithFilter(searchString: BusinessesViewController.searchFilter) { (businesses:[Business]?, error: Error?) in
-                if let businesses = businesses{
-                    self.businesses.append(contentsOf: businesses)
-                    self.businessTableView.reloadData()
-                    self.isLoadingMoreData = false
-                }
+        BusinessesViewController.searchFilter.offset = self.businesses.count
+        self.evaluateFilterCriteria()
+        
+        Business.searchWithFilter(searchString: BusinessesViewController.searchFilter) { (businesses:[Business]?, error: Error?) in
+            if let businesses = businesses{
+                self.businesses.append(contentsOf: businesses)
+                self.businessTableView.reloadData()
             }
+            self.isLoadingMoreData = false
+            self.loadingMoreProgressIndicator?.stopAnimating()
         }
     }
     
@@ -141,13 +155,23 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let totalHeight = self.businessTableView.contentSize.height
-        let offsetHeight = self.businessTableView.bounds.height
-        let threshold = totalHeight - offsetHeight
-        
-        if scrollView.contentOffset.y>threshold && scrollView.isDragging{
-            loadMoreData()
+        if(!isLoadingMoreData){
+            let totalHeight = self.businessTableView.contentSize.height
+            let offsetHeight = self.businessTableView.bounds.height
+            let threshold = totalHeight - offsetHeight
+            
+            if scrollView.contentOffset.y>threshold && scrollView.isDragging{
+                
+                self.isLoadingMoreData = true
+                
+                let frame = CGRect(x: 0, y: self.businessTableView.contentSize.height, width: self.businessTableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
+                self.loadingMoreProgressIndicator?.frame = frame
+                self.loadingMoreProgressIndicator!.startAnimating()
+                
+                loadMoreData()
+            }
         }
+        
     }
     
     /*
