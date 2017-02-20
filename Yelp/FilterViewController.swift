@@ -37,6 +37,7 @@ class FilterViewController: UIViewController, UITableViewDelegate, UITableViewDa
     func setupFilterUIFields(){
         if let distance = BusinessesViewController.searchFilter.distance{
             self.distanceSlider.value = Float(distance)
+            self.distanceLabel.text = "\(Int(self.distanceSlider.value))mi"
         }
         
         if let deal = BusinessesViewController.searchFilter.deal{

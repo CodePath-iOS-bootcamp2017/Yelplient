@@ -37,7 +37,7 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         let token = BDBOAuth1Credential(token: accessToken, secret: accessSecret, expiration: nil)
         self.requestSerializer.saveAccessToken(token)
     }
-    
+    /*
     func searchWithTerm(_ term: String, completion: @escaping ([Business]?, Error?) -> Void) -> AFHTTPRequestOperation {
         return searchWithTerm(term, sort: nil, categories: nil, deals: nil, completion: completion)
     }
@@ -81,7 +81,7 @@ class YelpClient: BDBOAuth1RequestOperationManager {
                             completion(nil, error)
                         })!
     }
-    
+    */
     func searchBusinesses(_ searchString: SearchFilter, completion: @escaping ([Business]?, Error?) -> Void) -> AFHTTPRequestOperation {
         // For additional parameters, see http://www.yelp.com/developers/documentation/v2/search_api
         
@@ -110,6 +110,10 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         
         if let distance = searchString.distance{
             parameters["radius_filter"] = Double(distance)*1609.34 as AnyObject?
+        }
+        
+        if let offset = searchString.offset{
+            parameters["offset"] = offset as AnyObject
         }
         
         print(parameters)

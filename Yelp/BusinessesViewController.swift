@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BusinessesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class BusinessesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
     
     var businesses: [Business]!
     static var searchFilter: SearchFilter = SearchFilter()
@@ -16,6 +16,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     @IBOutlet weak var businessTableView: UITableView!
     
     var searchBar:UISearchBar!
+    var isLoadingMoreData = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +28,11 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         
         self.initializeSearchFilter()
         self.configureSearchBar()
-        self.performInitialSearch()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        BusinessesViewController.searchFilter.offset = nil
+        self.loadDataFromNetwork()
     }
     
     override func didReceiveMemoryWarning() {
@@ -36,7 +41,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func initializeSearchFilter(){
-        print("initializeSearchFilter")
+//        print("initializeSearchFilter")
         BusinessesViewController.searchFilter.term = nil
         BusinessesViewController.searchFilter.categories = nil
         BusinessesViewController.searchFilter.distance = nil
@@ -82,58 +87,13 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         self.searchBar.delegate = self
     }
     
-    func performInitialSearch(){
-        /*
-         Business.searchWithTerm(term: "Thai", completion: { (businesses: [Business]?, error: Error?) -> Void in
-         
-         self.businesses = businesses
-         
-         if let businesses = businesses {
-         self.businessTableView.reloadData()
-         
-         for business in businesses {
-         print(business.name!)
-         print(business.address!)
-         }
-         }
-         
-         }
-         )
-         
-         //Example of Yelp search with more search options specified
-         Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
-         self.businesses = businesses
-         
-         for business in businesses {
-         print(business.name!)
-         print(business.address!)
-         }
-         }
-         */
-        
-        Business.search { (businesses: [Business]?, error: Error?) in
-            if let businesses = businesses {
-                self.businesses = businesses
-                self.businessTableView.reloadData()
-            }
-        }
+    func loadDataFromNetwork(){
+        self.evaluateFilterCriteria()
+        self.performSearchWithFilter()
     }
     
     func performSearchWithFilter(){
-        /*
-        if let searchText = self.searchBar.text{
-            BusinessesViewController.searchFilter.term = searchText
-        }else{
-            BusinessesViewController.searchFilter.term = ""
-        }
-//        print(BusinessesViewController.searchFilter.term)
-        Business.searchWithTerm(term: (BusinessesViewController.searchFilter.term)!, sort: nil, categories: nil, deals: nil) { (businesses: [Business]?, error: Error?) in
-            if let businesses = businesses{
-                self.businesses = businesses
-                self.businessTableView.reloadData()
-            }
-        }
-        */
+        
         self.evaluateFilterCriteria()
         Business.searchWithFilter(searchString: BusinessesViewController.searchFilter) { (businesses:[Business]?, error: Error?) in
             if let businesses = businesses{
@@ -142,6 +102,21 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
             }
         }
         
+    }
+    
+    func loadMoreData(){
+        if !isLoadingMoreData{
+            self.isLoadingMoreData = true
+            BusinessesViewController.searchFilter.offset = self.businesses.count
+            self.evaluateFilterCriteria()
+            Business.searchWithFilter(searchString: BusinessesViewController.searchFilter) { (businesses:[Business]?, error: Error?) in
+                if let businesses = businesses{
+                    self.businesses.append(contentsOf: businesses)
+                    self.businessTableView.reloadData()
+                    self.isLoadingMoreData = false
+                }
+            }
+        }
     }
     
     //overriding tableview delegate and datasource methods
@@ -165,6 +140,16 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let totalHeight = self.businessTableView.contentSize.height
+        let offsetHeight = self.businessTableView.bounds.height
+        let threshold = totalHeight - offsetHeight
+        
+        if scrollView.contentOffset.y>threshold && scrollView.isDragging{
+            loadMoreData()
+        }
+    }
+    
     /*
      // MARK: - Navigation
      
@@ -179,6 +164,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
 
 extension BusinessesViewController: UISearchBarDelegate{
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        BusinessesViewController.searchFilter.offset = nil
         self.searchBar.showsCancelButton = true
         self.performSearchWithFilter()
     }
@@ -191,6 +177,6 @@ extension BusinessesViewController: UISearchBarDelegate{
         self.searchBar.showsCancelButton = false
         self.searchBar.resignFirstResponder()
         self.searchBar.text = ""
-        self.performInitialSearch()
+        self.loadDataFromNetwork()
     }
 }
