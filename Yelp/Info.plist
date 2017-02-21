@@ -40,5 +40,7 @@
     <dict>
         <key>NSAllowsArbitraryLoads</key><true/>
     </dict>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>To show your and business location on the map</string>
 </dict>
 </plist>

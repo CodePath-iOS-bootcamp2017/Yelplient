@@ -11,6 +11,10 @@ class Business: NSObject {
     let reviewCount: NSNumber?
     var latitude: Double?
     var longitude: Double?
+    var id: String?
+    var dealTitle: String?
+    var phone: String?
+    var reviews: [Review]
     
     init(dictionary: NSDictionary) {
         name = dictionary["name"] as? String
@@ -83,6 +87,15 @@ class Business: NSObject {
         }
         
         reviewCount = dictionary["review_count"] as? NSNumber
+        
+        id = dictionary.value(forKey: "id") as? String
+        
+        self.reviews = []
+        if let reviews = dictionary.value(forKey: "reviews") as? [NSDictionary]{
+            for review in reviews{
+                self.reviews.append(Review(dictionary: review))
+            }
+        }
     }
     
     class func businesses(array: [NSDictionary]) -> [Business] {
@@ -93,6 +106,7 @@ class Business: NSObject {
         }
         return businesses
     }
+    
     /*
     class func searchWithTerm(term: String, completion: @escaping ([Business]?, Error?) -> Void) {
         _ = YelpClient.sharedInstance.searchWithTerm(term, completion: completion)
@@ -108,5 +122,9 @@ class Business: NSObject {
     */
     class func searchWithFilter(searchString: SearchFilter, completion: @escaping ([Business]?, Error?) -> Void) -> Void {
         _ = YelpClient.sharedInstance.searchBusinesses(searchString, completion: completion)
+    }
+    
+    class func getBusiness(businessId: String, completion: @escaping (Business?, Error?) -> Void) -> Void{
+        _ = YelpClient.sharedInstance.getBusiness(businessId, completion: completion)
     }
 }

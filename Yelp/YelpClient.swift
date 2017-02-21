@@ -49,7 +49,15 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         
         // For parameter reference http://www.yelp.com/developers/documentation/v2/search_api
         
-        var parameters: [String : AnyObject] = ["ll": "37.785771,-122.406165" as AnyObject]
+//        var parameters: [String : AnyObject] = ["ll": "37.785771,-122.406165" as AnyObject]
+        var ll = ""
+        if let userLocation = BusinessesViewController.userCurrentLocation{
+            ll = "\(userLocation.latitude),\(userLocation.longitude)"
+        }else{
+            ll = "37.7833, -122.4167"
+        }
+        
+        var parameters: [String : AnyObject] = ["ll": ll as AnyObject]
         
         if let term = searchString.term {
             parameters["term"] = term as AnyObject?
@@ -86,6 +94,24 @@ class YelpClient: BDBOAuth1RequestOperationManager {
                                 if let dictionaries = response["businesses"] as? [NSDictionary]{
                                     completion(Business.businesses(array: dictionaries), nil)
                                 }
+                            }
+        },
+                        failure: { (operation: AFHTTPRequestOperation?, error: Error) -> Void in
+                            print(error.localizedDescription)
+                            completion(nil, error)
+        })!
+    }
+    
+    func getBusiness(_ businessId: String, completion: @escaping (Business?, Error?) -> Void) -> AFHTTPRequestOperation{
+//        let parameters: [String: AnyObject] = ["id" : businessId as AnyObject]
+//        print(parameters)
+        return self.get("business/\(businessId)", parameters: nil,
+                        success: { (operation: AFHTTPRequestOperation, response: Any) -> Void in
+                            if let response = response as? [String: Any]{
+                                print(response)
+//                                if let dictionaries = response["businesses"] as? [NSDictionary]{
+//                                    completion(Business.businesses(array: dictionaries), nil)
+//                                }
                             }
         },
                         failure: { (operation: AFHTTPRequestOperation?, error: Error) -> Void in

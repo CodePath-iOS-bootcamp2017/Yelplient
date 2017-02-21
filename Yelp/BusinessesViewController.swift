@@ -6,30 +6,34 @@
 import UIKit
 import MapKit
 import SVProgressHUD
+import CoreLocation
 
-class BusinessesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
+class BusinessesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate, CLLocationManagerDelegate {
     
     var businesses: [Business]!
     static var searchFilter: SearchFilter = SearchFilter()
+    static var userCurrentLocation: CLLocationCoordinate2D?
     
     @IBOutlet weak var businessTableView: UITableView!
     @IBOutlet weak var mapView: MKMapView!
     var searchBar:UISearchBar!
     var loadingMoreProgressIndicator: InfiniteScrollActivityView?
     let refreshControl = UIRefreshControl()
-    
+    let filterButton = UIButton()
+    let switchViewButton = UIButton()
+    var locationManager: CLLocationManager!
     var isLoadingMoreData = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.configureTableView()
-        self.congigureMapView()
         self.configureProgressIndicator()
-        
         self.initializeSearchFilter()
         self.configureSearchBar()
         self.configureRefreshControl()
+        self.configureNavigationBar()
+        self.configureLocationManager()
+        self.congigureMapView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -42,8 +46,57 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         // Dispose of any resources that can be recreated.
     }
     
+    func configureLocationManager(){
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager.distanceFilter = 200
+        locationManager.requestWhenInUseAuthorization()
+    }
+    
+    func configureNavigationBar(){
+        
+        self.filterButton.frame = CGRect(x: 0, y: 0, width: 35, height: 25)
+        self.filterButton.setImage(UIImage(named:"filter.png"), for: UIControlState.normal)
+        self.filterButton.addTarget(self, action: #selector(onFilterBarButtonTapped(_:)), for: UIControlEvents.touchDown)
+        let filterBarButton = UIBarButtonItem()
+        filterBarButton.customView = self.filterButton
+        self.navigationItem.leftBarButtonItem = filterBarButton
+        
+        self.switchViewButton.frame = CGRect(x: 0, y: 0, width: 35, height: 25)
+        self.switchViewButton.setImage(UIImage(named:"map.png"), for: UIControlState.normal)
+        self.switchViewButton.addTarget(self, action: #selector(switchView(_:)), for: UIControlEvents.touchDown)
+        let switchViewBarButton = UIBarButtonItem()
+        switchViewBarButton.customView = self.switchViewButton
+        self.navigationItem.rightBarButtonItem = switchViewBarButton
+        
+//        self.loadNavigationBar()
+    }
+    
+    func switchView(_ sender: Any){
+        if self.businessTableView.isHidden{
+            self.businessTableView.isHidden = false
+            self.businessTableView.alpha = 1.0
+            self.mapView.isHidden = true
+            self.mapView.alpha = 0
+            self.switchViewButton.setImage(UIImage(named:"map.png"), for: UIControlState.normal)
+        }else{
+            self.businessTableView.isHidden = true
+            self.businessTableView.alpha = 0
+            self.mapView.isHidden = false
+            self.mapView.alpha = 1.0
+            self.plotMapAnnotations()
+            self.switchViewButton.setImage(UIImage(named:"list.png"), for: UIControlState.normal)
+        }
+    }
+    
+    func onFilterBarButtonTapped(_ sender: Any){
+        performSegue(withIdentifier: "filterShowSegue", sender: sender)
+    }
+    
     func configureRefreshControl(){
         self.refreshControl.addTarget(self, action: #selector(refreshContent(_:)), for: UIControlEvents.valueChanged)
+        self.refreshControl.tintColor = UIColor.red
         self.businessTableView.insertSubview(refreshControl, at: 0)
     }
     
@@ -65,9 +118,6 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     func congigureMapView(){
         self.mapView.isHidden = true
         self.mapView.alpha = 0.0
-        
-        let centerLocation = CLLocation(latitude: 37.7833, longitude: -122.4167)
-        self.goToLocation(location: centerLocation)
     }
     
     func goToLocation(location: CLLocation){
@@ -80,6 +130,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         let progressIndicatorFrameTableView = CGRect(x: 0, y: self.businessTableView.contentSize.height, width: self.businessTableView.bounds.width, height: InfiniteScrollActivityView.defaultHeight)
         self.loadingMoreProgressIndicator = InfiniteScrollActivityView(frame: progressIndicatorFrameTableView)
         loadingMoreProgressIndicator?.isHidden = true
+        
         self.businessTableView.addSubview(loadingMoreProgressIndicator!)
         
         var insetTableView = self.businessTableView.contentInset
@@ -91,7 +142,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
 //        print("initializeSearchFilter")
         BusinessesViewController.searchFilter.term = nil
         BusinessesViewController.searchFilter.categories = nil
-        BusinessesViewController.searchFilter.distance = nil
+        BusinessesViewController.searchFilter.distance = 15
         BusinessesViewController.searchFilter.deal = nil
         BusinessesViewController.searchFilter.offset = nil
         BusinessesViewController.searchFilter.sort = nil
@@ -141,11 +192,14 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     
     func performSearchWithFilter(){
         SVProgressHUD.show()
+        SVProgressHUD.setForegroundColor(UIColor.red)
+        
         self.evaluateFilterCriteria()
         Business.searchWithFilter(searchString: BusinessesViewController.searchFilter) { (businesses:[Business]?, error: Error?) in
             if let businesses = businesses{
                 self.businesses = businesses
                 self.businessTableView.reloadData()
+                self.plotMapAnnotations()
             }
             SVProgressHUD.dismiss()
         }
@@ -207,20 +261,6 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         
     }
     
-    @IBAction func onViewChanged(_ sender: Any) {
-        if self.businessTableView.isHidden{
-           self.businessTableView.isHidden = false
-           self.businessTableView.alpha = 1.0
-            self.mapView.isHidden = true
-            self.mapView.alpha = 0
-        }else{
-            self.businessTableView.isHidden = true
-            self.businessTableView.alpha = 0
-            self.mapView.isHidden = false
-            self.mapView.alpha = 1.0
-            self.plotMapAnnotations()
-        }
-    }
     
     func plotMapAnnotations(){
         self.mapView.removeAnnotations(self.mapView.annotations)
@@ -233,16 +273,39 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         }
     }
     
-    /*
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == CLAuthorizationStatus.authorizedWhenInUse{
+            print("got location authorization")
+            locationManager.startUpdatingLocation()
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print("user location updated")
+        if let userLocation = locations.first{
+            print("user location: \(userLocation)")
+            BusinessesViewController.userCurrentLocation = userLocation.coordinate
+            self.loadDataFromNetwork()
+            self.goToLocation(location: userLocation)
+        }
+    }
+    
+    
      // MARK: - Navigation
      
      // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-     // Get the new view controller using segue.destinationViewController.
-     // Pass the selected object to the new view controller.
-     }
-     */
-    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        print("prepareForSegue")
+        if segue.identifier == "businessDetailsSegue"{
+            if let cell = sender as? BusinessTableViewCell{
+                if let cellIndex = self.businessTableView.indexPath(for: cell){
+                    if let detailsViewController = segue.destination as? BusinessDetailViewController{
+                        detailsViewController.business = self.businesses[cellIndex.row]
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension BusinessesViewController: UISearchBarDelegate{
