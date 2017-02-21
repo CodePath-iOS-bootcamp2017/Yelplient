@@ -96,6 +96,16 @@ class Business: NSObject {
                 self.reviews.append(Review(dictionary: review))
             }
         }
+        
+        if let phone = dictionary.value(forKey: "phone") as? String{
+            self.phone = phone
+        }
+        
+        if let deal = dictionary.value(forKey: "deals") as? [NSDictionary]{
+            if let dealTitle = deal[0].value(forKey: "title") as? String{
+                self.dealTitle = dealTitle
+            }
+        }
     }
     
     class func businesses(array: [NSDictionary]) -> [Business] {

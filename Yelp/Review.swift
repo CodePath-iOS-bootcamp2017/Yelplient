@@ -12,10 +12,11 @@ class Review: NSObject {
     var username: String?
     var userImageURL: URL?
     var ratingImageURL: URL?
+    var comment: String?
     
     init(dictionary: NSDictionary){
         if let user = dictionary.value(forKey: "user") as? NSDictionary{
-            if let name = user.value(forKey: "") as? String{
+            if let name = user.value(forKey: "name") as? String{
                 self.username = name
             }
             
@@ -35,6 +36,10 @@ class Review: NSObject {
             }
         }else{
             print("rating can't be converted to url")
+        }
+        
+        if let userComment = dictionary.value(forKey: "excerpt") as? String{
+            self.comment = userComment
         }
     }
 }

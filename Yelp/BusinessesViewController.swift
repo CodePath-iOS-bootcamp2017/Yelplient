@@ -26,19 +26,20 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.configureTableView()
-        self.configureProgressIndicator()
         self.initializeSearchFilter()
+        self.configureTableView()
+//        self.loadDataFromNetwork()
+        self.configureProgressIndicator()
         self.configureSearchBar()
         self.configureRefreshControl()
         self.configureNavigationBar()
-        self.configureLocationManager()
-        self.congigureMapView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         BusinessesViewController.searchFilter.offset = nil
         self.loadDataFromNetwork()
+        self.configureLocationManager()
+        self.congigureMapView()
     }
     
     override func didReceiveMemoryWarning() {

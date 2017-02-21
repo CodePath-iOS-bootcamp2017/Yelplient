@@ -24,6 +24,7 @@ class BusinessDetailViewController: UIViewController, UITableViewDelegate, UITab
         if let businessId = self.business?.id{
             Business.getBusiness(businessId: businessId) { (business: Business?, error: Error?) in
                 self.business = business
+                self.detalisTableView.reloadData()
             }
         }
     }
@@ -36,6 +37,9 @@ class BusinessDetailViewController: UIViewController, UITableViewDelegate, UITab
     func setupDetailsTableView(){
         self.detalisTableView.dataSource = self
         self.detalisTableView.delegate = self
+        
+        self.detalisTableView.estimatedRowHeight = 120
+        self.detalisTableView.rowHeight = UITableViewAutomaticDimension
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -48,12 +52,13 @@ class BusinessDetailViewController: UIViewController, UITableViewDelegate, UITab
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch(indexPath.row){
-            case 1:
+            case 0:
+                print("DetailsOverviewTableViewCell")
                 let cell = tableView.dequeueReusableCell(withIdentifier: "DetailsOverviewTableViewCell", for: indexPath) as! DetailsOverviewTableViewCell
                 cell.business = self.business
                 return cell
             
-            case 2:
+            case 1:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "DetailsMapTableViewCell", for: indexPath) as! DetailsMapTableViewCell
                 cell.business = self.business
                 return cell

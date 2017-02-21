@@ -10,7 +10,39 @@ import UIKit
 
 class DetailsReviewsTableViewCell: UITableViewCell {
 
-    var business: Business?
+    
+    
+    @IBOutlet weak var profileImageView: UIImageView!
+    
+    @IBOutlet weak var ratingImageView: UIImageView!
+    
+    @IBOutlet weak var commentLabel: UILabel!
+    
+    @IBOutlet weak var nameLabel: UILabel!
+    
+    var business: Business?{
+        didSet{
+            if let reviews = business?.reviews{
+                if reviews.count > 0{
+                    print("has review comments")
+                    let firstReview = reviews[0]
+                    self.nameLabel.text = firstReview.username
+                    
+                    if let ratingImageUrl = firstReview.ratingImageURL{
+                        self.ratingImageView.setImageWith(ratingImageUrl)
+                    }
+                    
+                    if let profileImageUrl = firstReview.userImageURL{
+                        self.profileImageView.setImageWith(profileImageUrl)
+                    }
+                    
+                    self.commentLabel.text = firstReview.comment
+                }else{
+                    print("No review comments")
+                }
+            }
+        }
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
