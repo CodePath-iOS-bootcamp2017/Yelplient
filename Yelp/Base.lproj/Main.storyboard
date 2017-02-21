@@ -166,16 +166,18 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="146" id="bDd-aU-naD">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="DetailsOverviewTableViewCell" rowHeight="146" id="bDd-aU-naD" customClass="DetailsOverviewTableViewCell" customModule="Yelp" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="414" height="146"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bDd-aU-naD" id="gAJ-jO-jXr">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="145"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V00-Nw-Fci">
-                                                    <rect key="frame" x="-6" y="8" width="425" height="128"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="V00-Nw-Fci">
+                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="128"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="128" id="uLE-UP-q8m"/>
+                                                    </constraints>
                                                 </imageView>
                                                 <view alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vva-hv-NpW">
                                                     <rect key="frame" x="0.0" y="8" width="414" height="128"/>
@@ -246,9 +248,26 @@
                                                     <color key="backgroundColor" red="0.78685806236118849" green="0.78685806236118849" blue="0.78685806236118849" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </view>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstItem="V00-Nw-Fci" firstAttribute="top" secondItem="gAJ-jO-jXr" secondAttribute="top" id="V7P-1N-2pR"/>
+                                                <constraint firstItem="V00-Nw-Fci" firstAttribute="leading" secondItem="gAJ-jO-jXr" secondAttribute="leading" id="eoX-Mt-1Ih"/>
+                                                <constraint firstItem="V00-Nw-Fci" firstAttribute="width" secondItem="gAJ-jO-jXr" secondAttribute="width" id="iLt-RD-UjK"/>
+                                            </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="categoriesLabel" destination="6y3-dv-6an" id="3zE-k7-VNb"/>
+                                            <outlet property="dealImageView" destination="fLm-9g-bc4" id="xsQ-se-hAZ"/>
+                                            <outlet property="dealLabel" destination="xFd-yf-H1F" id="zRW-Ux-OJh"/>
+                                            <outlet property="distanceLabel" destination="e6g-DP-LlC" id="vwW-eC-HZM"/>
+                                            <outlet property="nameLabel" destination="h6e-SG-7YJ" id="3wN-Sw-3UF"/>
+                                            <outlet property="phoneImageView" destination="Zzd-rC-1XB" id="1R0-fn-XVB"/>
+                                            <outlet property="phoneLabel" destination="F6w-Jy-yrS" id="7Vp-QP-b3X"/>
+                                            <outlet property="posterImageView" destination="V00-Nw-Fci" id="J1H-nP-oXM"/>
+                                            <outlet property="ratingsImageView" destination="P3w-f4-Tkp" id="719-jD-hcL"/>
+                                            <outlet property="reviewsLabel" destination="krB-NW-e3O" id="KVe-Zs-jnr"/>
+                                        </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="161" id="5HB-tS-yjV">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="DetailsMapTableViewCell" rowHeight="161" id="5HB-tS-yjV" customClass="DetailsMapTableViewCell" customModule="Yelp" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="174" width="414" height="161"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5HB-tS-yjV" id="HtQ-bg-Hh8">
@@ -262,7 +281,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="168" id="A0Q-cs-6Jc">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="DetailsReviewsTableViewCell" rowHeight="168" id="A0Q-cs-6Jc" customClass="DetailsReviewsTableViewCell" customModule="Yelp" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="335" width="414" height="168"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="A0Q-cs-6Jc" id="CW7-ga-KbG">
@@ -275,6 +294,9 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <connections>
+                        <outlet property="detalisTableView" destination="Nf8-xn-fKm" id="ygG-Bk-jDG"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ns2-py-feS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

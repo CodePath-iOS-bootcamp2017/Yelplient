@@ -8,45 +8,62 @@
 
 import UIKit
 
-class BusinessDetailViewController: UIViewController {
+class BusinessDetailViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     var business: Business?
     
-    @IBOutlet weak var posterImageView: UIImageView!
-    
-    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var detalisTableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.fetchBusinessDetails()
-        
+        self.setupDetailsTableView()
     }
     
     func fetchBusinessDetails(){
         if let businessId = self.business?.id{
             Business.getBusiness(businessId: businessId) { (business: Business?, error: Error?) in
                 self.business = business
-                self.setupUI()
             }
         }
     }
     
-    func setupUI(){
-        if let name = business?.name{
-            self.nameLabel.text = name
-        }
-        
-        if let posterUrl = self.business?.imageURL{
-            self.posterImageView.setImageWith(posterUrl)
-        }
-    }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
+    func setupDetailsTableView(){
+        self.detalisTableView.dataSource = self
+        self.detalisTableView.delegate = self
+    }
 
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if business == nil{
+            return 0
+        }else{
+            return 3
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch(indexPath.row){
+            case 1:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "DetailsOverviewTableViewCell", for: indexPath) as! DetailsOverviewTableViewCell
+                cell.business = self.business
+                return cell
+            
+            case 2:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "DetailsMapTableViewCell", for: indexPath) as! DetailsMapTableViewCell
+                cell.business = self.business
+                return cell
+            
+            default:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "DetailsReviewsTableViewCell", for: indexPath) as! DetailsReviewsTableViewCell
+                cell.business = self.business
+                return cell
+        }
+    }
     /*
     // MARK: - Navigation
 

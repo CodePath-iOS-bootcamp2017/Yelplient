@@ -22,6 +22,9 @@
 		246F4C211E553B7D0033ADD3 /* BusinessTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 246F4C201E553B7D0033ADD3 /* BusinessTableViewCell.swift */; };
 		24FC93AA1E5BD44100A1EA91 /* BusinessDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FC93A91E5BD44100A1EA91 /* BusinessDetailViewController.swift */; };
 		24FC93AC1E5BF3D000A1EA91 /* Review.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FC93AB1E5BF3D000A1EA91 /* Review.swift */; };
+		24FC93AE1E5C0E4000A1EA91 /* DetailsOverviewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FC93AD1E5C0E4000A1EA91 /* DetailsOverviewTableViewCell.swift */; };
+		24FC93B01E5C0E6E00A1EA91 /* DetailsMapTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FC93AF1E5C0E6E00A1EA91 /* DetailsMapTableViewCell.swift */; };
+		24FC93B21E5C0E8400A1EA91 /* DetailsReviewsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FC93B11E5C0E8400A1EA91 /* DetailsReviewsTableViewCell.swift */; };
 		31D95BCBCA38716181E686D3 /* Pods_Yelp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C79C0AC126EDAA235847CEA2 /* Pods_Yelp.framework */; };
 		47848697133B87663A122E3D /* Pods_YelpTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A1000F3975EB43318C1D4FA /* Pods_YelpTests.framework */; };
 /* End PBXBuildFile section */
@@ -57,6 +60,9 @@
 		246F4C201E553B7D0033ADD3 /* BusinessTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BusinessTableViewCell.swift; sourceTree = "<group>"; };
 		24FC93A91E5BD44100A1EA91 /* BusinessDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BusinessDetailViewController.swift; sourceTree = "<group>"; };
 		24FC93AB1E5BF3D000A1EA91 /* Review.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Review.swift; sourceTree = "<group>"; };
+		24FC93AD1E5C0E4000A1EA91 /* DetailsOverviewTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsOverviewTableViewCell.swift; sourceTree = "<group>"; };
+		24FC93AF1E5C0E6E00A1EA91 /* DetailsMapTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsMapTableViewCell.swift; sourceTree = "<group>"; };
+		24FC93B11E5C0E8400A1EA91 /* DetailsReviewsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsReviewsTableViewCell.swift; sourceTree = "<group>"; };
 		5871D66103F8E8D78915F798 /* Pods-YelpTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YelpTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-YelpTests/Pods-YelpTests.debug.xcconfig"; sourceTree = "<group>"; };
 		883322706A784248B16F444A /* Pods-Yelp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Yelp.release.xcconfig"; path = "Pods/Target Support Files/Pods-Yelp/Pods-Yelp.release.xcconfig"; sourceTree = "<group>"; };
 		9B128C050DE78660DE2A8E75 /* Pods-YelpTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YelpTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-YelpTests/Pods-YelpTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -180,6 +186,9 @@
 				246F4C201E553B7D0033ADD3 /* BusinessTableViewCell.swift */,
 				2409E9D81E5A0A0C0067E5C3 /* FilterFeatureTableViewCell.swift */,
 				2409E9DA1E5A88220067E5C3 /* InfiniteScrollActivityView.swift */,
+				24FC93AD1E5C0E4000A1EA91 /* DetailsOverviewTableViewCell.swift */,
+				24FC93AF1E5C0E6E00A1EA91 /* DetailsMapTableViewCell.swift */,
+				24FC93B11E5C0E8400A1EA91 /* DetailsReviewsTableViewCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -408,11 +417,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24FC93B01E5C0E6E00A1EA91 /* DetailsMapTableViewCell.swift in Sources */,
 				2409E9DB1E5A88220067E5C3 /* InfiniteScrollActivityView.swift in Sources */,
 				2409E9D91E5A0A0C0067E5C3 /* FilterFeatureTableViewCell.swift in Sources */,
 				2409E9D71E59F4770067E5C3 /* FilterViewController.swift in Sources */,
 				246F4C211E553B7D0033ADD3 /* BusinessTableViewCell.swift in Sources */,
 				2409E9D51E5978A90067E5C3 /* SearchFilter.swift in Sources */,
+				24FC93B21E5C0E8400A1EA91 /* DetailsReviewsTableViewCell.swift in Sources */,
+				24FC93AE1E5C0E4000A1EA91 /* DetailsOverviewTableViewCell.swift in Sources */,
 				22AAAA9C1AEA1EC300A544AF /* BusinessesViewController.swift in Sources */,
 				24FC93AC1E5BF3D000A1EA91 /* Review.swift in Sources */,
 				22AAAA991AEA0A9700A544AF /* Business.swift in Sources */,

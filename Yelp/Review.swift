@@ -19,16 +19,20 @@ class Review: NSObject {
                 self.username = name
             }
             
-            if let userProfileUrl = user.value(forKey: "image_url") as? URL{
-                self.userImageURL = userProfileUrl
+            if let userProfileUrlString = user.value(forKey: "image_url") as? String{
+                if let profileURL = URL(string: userProfileUrlString){
+                    self.userImageURL = profileURL
+                }
             }else{
                 print("user profile can't be converted to url")
             }
         }
         
         
-        if let ratingUrl = dictionary.value(forKey: "rating_image_url") as? URL{
-            self.ratingImageURL = ratingUrl
+        if let ratingUrlString = dictionary.value(forKey: "rating_image_url") as? String{
+            if let ratingUrl = URL(string: ratingUrlString){
+                self.ratingImageURL = ratingUrl
+            }
         }else{
             print("rating can't be converted to url")
         }

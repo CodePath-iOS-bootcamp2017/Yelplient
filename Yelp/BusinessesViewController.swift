@@ -207,16 +207,18 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func loadMoreData(){
-        BusinessesViewController.searchFilter.offset = self.businesses.count
-        self.evaluateFilterCriteria()
-        
-        Business.searchWithFilter(searchString: BusinessesViewController.searchFilter) { (businesses:[Business]?, error: Error?) in
-            if let businesses = businesses{
-                self.businesses.append(contentsOf: businesses)
-                self.businessTableView.reloadData()
+        if let businesses = self.businesses{
+            BusinessesViewController.searchFilter.offset = businesses.count
+            self.evaluateFilterCriteria()
+            
+            Business.searchWithFilter(searchString: BusinessesViewController.searchFilter) { (businesses:[Business]?, error: Error?) in
+                if let businesses = businesses{
+                    self.businesses.append(contentsOf: businesses)
+                    self.businessTableView.reloadData()
+                }
+                self.isLoadingMoreData = false
+                self.loadingMoreProgressIndicator?.stopAnimating()
             }
-            self.isLoadingMoreData = false
-            self.loadingMoreProgressIndicator?.stopAnimating()
         }
     }
     
