@@ -32,7 +32,7 @@ Please list two areas of the assignment you'd like to **discuss further with you
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/I0Q91r3.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://github.com/CodePath-iOS-bootcamp2017/Yelplient/blob/master/yelp_demo.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
